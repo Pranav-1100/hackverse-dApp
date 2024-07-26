@@ -1,6 +1,6 @@
 const axios = require('axios');
 const BASE_URL = "https://sandbox-api.okto.tech";
-const OKTO_CLIENT_API = "f7aa7c2d-6eab-4ca8-b441-4db577c50c17";
+
 
 const apiService = axios.create({
   baseURL: BASE_URL,
