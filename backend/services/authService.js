@@ -1,6 +1,6 @@
 const axios = require('axios');
 const BASE_URL = "https://sandbox-api.okto.tech";
-
+const env = require('dotenv')
 
 const apiService = axios.create({
   baseURL: BASE_URL,
