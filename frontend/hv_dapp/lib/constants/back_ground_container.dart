@@ -11,7 +11,7 @@ class BackGroundContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: width,
-      height: hieght,
+      height: height,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.only(

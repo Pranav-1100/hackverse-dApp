@@ -47,8 +47,8 @@ class _ExpandableTextState extends State<ExpandableText> {
             },
             child: Row(
               children: [
-                ReusableText2(text: flag?"Read More":"Read Less" , style: appStyle(12, kPrimary, FontWeight.normal),),
-                Icon(flag?Icons.arrow_drop_down:Icons.arrow_drop_up,color: kPrimary,size: 24.h,),
+                ReusableText2(text: flag?"Read More":"Read Less" , style: appStyle(12, kBackground, FontWeight.normal),),
+                Icon(flag?Icons.arrow_drop_down:Icons.arrow_drop_up,color: kBackground,size: 24.h,),
               ],
             ),
           ),

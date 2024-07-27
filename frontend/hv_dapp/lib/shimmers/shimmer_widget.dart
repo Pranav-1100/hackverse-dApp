@@ -22,13 +22,13 @@ class ShimmerWidget extends StatelessWidget {
   Widget _buildShimmerLine(
       {required double height, required double width, required double radius}) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: kSecondaryLight,
+      baseColor:kDark,
+      highlightColor: kSelection,
       child: Container(
         height: height,
         width: width,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: kDark,
           borderRadius: BorderRadius.circular(radius),
         ),
       ),
