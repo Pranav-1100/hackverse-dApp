@@ -1,63 +1,39 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const axios = require('axios');
 
-exports.registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+const apiService = axios.create({
+  baseURL: process.env.BASE_URL,
+  headers: {
+    "x-api-key": process.env.OKTO_CLIENT_API_KEY,
+    "Content-Type": "application/json"
+  }
+});
+
+
+exports.handleGoogleLogin = async (req, res) => {
+  const { idToken } = req.body;
   try {
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ msg: 'User already exists' });
+    const response = await apiService.post('/api/v1/authenticate', { id_token: idToken });
+    if (response.data.auth_token) {
+      res.status(200).json({ authToken: response.data.auth_token });
+    } else {
+      res.status(400).json({ message: 'Authentication failed' });
     }
-    user = new User({
-      name,
-      email,
-      password: bcrypt.hashSync(password, 10),
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+exports.setPin = async (req, res) => {
+  const { idToken, token, reloginPin } = req.body;
+  try {
+    const response = await apiService.post('/api/v1/set_pin', {
+      id_token: idToken,
+      token: token,
+      relogin_pin: reloginPin,
+      purpose: "set_pin"
     });
-    await user.save();
-    const payload = { userId: user.id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(200).json({ message: 'Pin set successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
-
-exports.loginUser = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
-    }
-    const isMatch = bcrypt.compareSync(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' });
-    }
-    const payload = { userId: user.id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
-  }
-};
-
-exports.verifyToken = (req, res) => {
-    const token = req.header('x-auth-token');
-    console.log('Token:', token); // Log the token
-  
-    if (!token) {
-      return res.status(401).json({ msg: 'No token, authorization denied' });
-    }
-  
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      res.json({ userId: decoded.userId });
-    } catch (err) {
-      console.error('Token verification failed:', err.message); // Log the error
-      res.status(401).json({ msg: 'Token is not valid' });
-    }
-  };
-  
